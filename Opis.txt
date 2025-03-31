@@ -1,0 +1,18 @@
+Krótki opis:
+Aplikacja skierowana do osób zainteresowanych motoryzacją. Umożliwia użytkownikom dodawanie zdjęć napotkanych pojazdów, oznaczanie i udostępnianie lokalizacji, dodawanie eventów i meetupów oraz wypatrywanie ciekawych aut w swojej najbliższej okolicy.
+
+Poprawki:
+- dodane połączenia między activity
+- dynamiczne posty na zakładce Zdjęcia za pomocą Firebase Firestore
+- logowanie poprzez Google Autentication
+- stworzony loading screen i ikona aplikacji
+- dodawanie eventów i postów (przy tworzeniu posta pobierana jest lokalizacja)
+
+Do zrobienia w najbliższej przyszłości:
+- stworzenie animacji wyświetlanej przy odpaleniu aplikacji
+- dodanie stworzonych grafik do aplikacji
+- poprawa ogólnego wyglądu aplikacji
+- zrobienie taba Radius
+- dodanie wyświetlania zdjęć przy postach
+
++ dodanie automatycznego rozpoznawania modelu i marki pojazdu przy uploadowaniu zdjęcia
