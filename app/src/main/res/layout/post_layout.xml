@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/blue">
+
+    <ImageView
+        android:id="@+id/postimage"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_marginStart="74dp"
+        android:layout_marginTop="27dp"
+        android:layout_marginEnd="74dp"
+        android:layout_marginBottom="26dp"
+        app:layout_constraintBottom_toTopOf="@+id/postdesc"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/posttitle"
+        tools:src="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/posttitle"
+        android:layout_width="275dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="87dp"
+        android:layout_marginTop="148dp"
+        android:layout_marginEnd="86dp"
+        android:layout_marginBottom="27dp"
+        android:text="TITLE"
+        android:textSize="35dp"
+        android:background="#326EAE"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toTopOf="@+id/postimage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view" />
+
+    <TextView
+        android:id="@+id/postdesc"
+        android:layout_width="350dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="49dp"
+        android:layout_marginTop="26dp"
+        android:layout_marginEnd="49dp"
+        android:layout_marginBottom="276dp"
+        android:text="DESCRIPTION"
+        android:textSize="25dp"
+        android:background="#326EAE"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/postimage" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:background="#326EAE"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/postuser"
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="135dp"
+        android:textAlignment="center"
+        android:text="USERNAME"
+        android:textSize="37dp"
+        app:layout_constraintBottom_toTopOf="@+id/posttitle"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

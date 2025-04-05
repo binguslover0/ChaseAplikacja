@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class ZdjeciaActivity extends AppCompatActivity {
+public class ZdjeciaActivity extends AppCompatActivity implements PostInterface{
 
     RecyclerView recyclerView;
     ArrayList<Post> postArrayList;
@@ -47,7 +47,7 @@ public class ZdjeciaActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         postArrayList = new ArrayList<>();
-        postAdapter = new PostAdapter(ZdjeciaActivity.this, postArrayList);
+        postAdapter = new PostAdapter(ZdjeciaActivity.this, postArrayList, this);
 
         recyclerView.setAdapter(postAdapter);
 
@@ -114,4 +114,14 @@ public class ZdjeciaActivity extends AppCompatActivity {
                 });
     }
 
+    @Override
+    public void onItemClick(int position) {
+        Intent intent = new Intent(ZdjeciaActivity.this, PostyClickActivity.class);
+
+        intent.putExtra("TITLE", postArrayList.get(position).getTitle());
+        intent.putExtra("USERNAME", postArrayList.get(position).getUsername());
+        intent.putExtra("DESCRIPTION", postArrayList.get(position).getDescription());
+
+        startActivity(intent);
+    }
 }

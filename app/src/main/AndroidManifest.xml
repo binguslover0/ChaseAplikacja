@@ -39,6 +39,10 @@
             android:exported="true"
             android:label="activity_dodaj_post" />
         <activity
+            android:name=".PostyClickActivity"
+            android:exported="true"
+            android:label="activity_post_click" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

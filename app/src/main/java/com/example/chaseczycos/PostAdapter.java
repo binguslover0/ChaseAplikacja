@@ -13,13 +13,15 @@ import java.util.ArrayList;
 
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyViewHolder> {
+    private final PostInterface postInterface;
 
     Context context;
     ArrayList<Post> postArrayList;
 
-    public PostAdapter(Context context, ArrayList<Post> postArrayList) {
+    public PostAdapter(Context context, ArrayList<Post> postArrayList, PostInterface postInterface) {
         this.context = context;
         this.postArrayList = postArrayList;
+        this.postInterface = postInterface;
     }
 
     @NonNull
@@ -28,7 +30,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyViewHolder> 
 
         View v = LayoutInflater.from(context).inflate(R.layout.recycler_view_row, parent, false);
 
-        return new MyViewHolder(v);
+        return new MyViewHolder(v, postInterface);
     }
 
     @Override
@@ -53,11 +55,26 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyViewHolder> 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView title, username, description;
 
-        public MyViewHolder(@NonNull View itemView) {
+        public MyViewHolder(@NonNull View itemView, PostInterface postInterface) {
             super(itemView);
             title = itemView.findViewById(R.id.titleView);
             username = itemView.findViewById(R.id.usernameView);
             description = itemView.findViewById(R.id.descriptionView);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (postInterface != null) {
+                        int pos = getAdapterPosition();
+
+                        if  (pos != RecyclerView.NO_POSITION) {
+                            postInterface.onItemClick(pos);
+                        }
+
+                    }
+                }
+            });
+
         }
     }
 }

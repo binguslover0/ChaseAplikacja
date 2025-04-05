@@ -47,7 +47,12 @@ public class EventActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         postArrayList = new ArrayList<>();
-        postAdapter = new PostAdapter(EventActivity.this, postArrayList);
+        postAdapter = new PostAdapter(EventActivity.this, postArrayList, new PostInterface() {
+            @Override
+            public void onItemClick(int position) {
+
+            }
+        });
 
         recyclerView.setAdapter(postAdapter);
 
@@ -73,7 +78,7 @@ public class EventActivity extends AppCompatActivity {
                         if (error != null) {
                             if (progressDialog.isShowing())
                                 progressDialog.dismiss();
-                            Log.e("Firestore error", error.getMessage());
+                            Log.e("Błąd servera: ", error.getMessage());
                             return;
                         }
 
@@ -86,7 +91,7 @@ public class EventActivity extends AppCompatActivity {
                             }
                         }
 
-                        Log.d("EventActivity", "Number of posts: " + postArrayList.size());
+                        //Log.d("EventActivity", "Number of posts: " + postArrayList.size());
 
                         postAdapter.notifyDataSetChanged();
 
