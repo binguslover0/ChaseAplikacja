@@ -31,6 +31,10 @@
             android:exported="true"
             android:label="activity_eventy" />
         <activity
+            android:name=".LokalizacjaActivity"
+            android:exported="true"
+            android:label="activity_lokalizacja" />
+        <activity
             android:name=".DodajEventActivity"
             android:exported="true"
             android:label="activity_dodaj_event" />

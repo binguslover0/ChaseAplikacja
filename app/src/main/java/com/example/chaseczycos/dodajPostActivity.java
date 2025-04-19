@@ -1,23 +1,15 @@
 package com.example.chaseczycos;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,63 +18,46 @@ import com.google.firebase.firestore.GeoPoint;
 
 public class dodajPostActivity extends AppCompatActivity {
 
+    private static final int LOCATION_PICKER_REQUEST = 1001;
+
     private EditText editTextTitle, editTextDescription;
-    private Button buttonAddPost;
+    private Button buttonAddPost, buttonPickLocation;
     private FirebaseAuth mAuth;
     private FirebaseFirestore firestore;
-    private FusedLocationProviderClient fusedLocationClient;
 
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private GeoPoint pickedLocation = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dodaj_post);
 
-        // Initialize Firestore and Firebase Auth
         firestore = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
-        // Initialize location provider
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        // Bind UI elements
         editTextTitle = findViewById(R.id.editTextTitle);
         editTextDescription = findViewById(R.id.editTextDescription);
         buttonAddPost = findViewById(R.id.buttonAddPost);
+        buttonPickLocation = findViewById(R.id.lokalizacjaButton);
 
-        // Set onClickListener for the Add Post button
-        buttonAddPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkLocationPermissionAndAddPost();
-            }
+        buttonAddPost.setOnClickListener(v -> addPost(pickedLocation));
+
+        buttonPickLocation.setOnClickListener(v -> {
+            Intent intent = new Intent(dodajPostActivity.this, LokalizacjaActivity.class);
+            startActivityForResult(intent, LOCATION_PICKER_REQUEST);
         });
     }
 
-    private void checkLocationPermissionAndAddPost() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
-        } else {
-            getCurrentLocationAndAddPost();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == LOCATION_PICKER_REQUEST && resultCode == RESULT_OK && data != null) {
+            double lat = data.getDoubleExtra("lat", 0);
+            double lng = data.getDoubleExtra("lng", 0);
+            pickedLocation = new GeoPoint(lat, lng);
+            Toast.makeText(this, "Wybrana lokalizacja: " + lat + ", " + lng, Toast.LENGTH_SHORT).show();
         }
-    }
-
-    @SuppressWarnings("MissingPermission") // We check permission before calling this method
-    private void getCurrentLocationAndAddPost() {
-        fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                if (location != null) {
-                    // Convert Location to GeoPoint
-                    GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
-                    addPost(geoPoint);
-                } else {
-                    Toast.makeText(dodajPostActivity.this, "Unable to get location, adding post without location.", Toast.LENGTH_SHORT).show();
-                    addPost(null); // Proceed without location
-                }
-            }
-        });
     }
 
     private void addPost(GeoPoint location) {
@@ -90,13 +65,13 @@ public class dodajPostActivity extends AppCompatActivity {
         String description = editTextDescription.getText().toString().trim();
 
         if (title.isEmpty() || description.isEmpty()) {
-            Toast.makeText(dodajPostActivity.this, "Please fill in both fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Wypełnij oba pola.", Toast.LENGTH_SHORT).show();
             return;
         }
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
-            Toast.makeText(this, "You need to be logged in to add a post.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Zaloguj się aby dodawać posty.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -106,31 +81,11 @@ public class dodajPostActivity extends AppCompatActivity {
         firestore.collection("user_posts")
                 .add(post)
                 .addOnSuccessListener(documentReference -> {
-                    Toast.makeText(dodajPostActivity.this, "Post added successfully!", Toast.LENGTH_SHORT).show();
-
-                    Intent intent = new Intent(dodajPostActivity.this, ZdjeciaActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
+                    Toast.makeText(this, "Dodano post!", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(this, ZdjeciaActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                     finish();
-
-                    editTextTitle.setText("");
-                    editTextDescription.setText("");
                 })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(dodajPostActivity.this, "Error adding post: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getCurrentLocationAndAddPost();
-            } else {
-                Toast.makeText(this, "Location permission denied. Post will be added without location.", Toast.LENGTH_SHORT).show();
-                addPost(null);
-            }
-        }
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Błąd przy dodawaniu posta: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 }

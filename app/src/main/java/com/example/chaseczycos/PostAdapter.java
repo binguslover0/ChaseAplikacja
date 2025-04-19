@@ -38,12 +38,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyViewHolder> 
 
         Post post = postArrayList.get(position);
 
-        // Set the text views with data
         holder.username.setText(post.username);
         holder.title.setText(post.title);
         holder.description.setText(post.description);
-
-        // Use Glide to load the image URL into the ImageView
     }
 
 
