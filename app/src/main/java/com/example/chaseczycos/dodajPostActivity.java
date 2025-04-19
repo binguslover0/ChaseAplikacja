@@ -2,9 +2,10 @@ package com.example.chaseczycos;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -21,11 +22,14 @@ public class dodajPostActivity extends AppCompatActivity {
     private static final int LOCATION_PICKER_REQUEST = 1001;
 
     private EditText editTextTitle, editTextDescription;
-    private Button buttonAddPost, buttonPickLocation;
+    private Button buttonAddPost;
+    private ImageButton buttonPickLocation;
+    private TextView textViewPickedAddress;
     private FirebaseAuth mAuth;
     private FirebaseFirestore firestore;
 
     private GeoPoint pickedLocation = null;
+    private String pickedAddress = "Nie wybrano.";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +43,9 @@ public class dodajPostActivity extends AppCompatActivity {
         editTextDescription = findViewById(R.id.editTextDescription);
         buttonAddPost = findViewById(R.id.buttonAddPost);
         buttonPickLocation = findViewById(R.id.lokalizacjaButton);
+        textViewPickedAddress = findViewById(R.id.wybranyAdres);
+
+        textViewPickedAddress.setText(pickedAddress);
 
         buttonAddPost.setOnClickListener(v -> addPost(pickedLocation));
 
@@ -55,8 +62,10 @@ public class dodajPostActivity extends AppCompatActivity {
         if (requestCode == LOCATION_PICKER_REQUEST && resultCode == RESULT_OK && data != null) {
             double lat = data.getDoubleExtra("lat", 0);
             double lng = data.getDoubleExtra("lng", 0);
+            pickedAddress = data.getStringExtra("address");
             pickedLocation = new GeoPoint(lat, lng);
-            Toast.makeText(this, "Wybrana lokalizacja: " + lat + ", " + lng, Toast.LENGTH_SHORT).show();
+
+            textViewPickedAddress.setText(pickedAddress);
         }
     }
 
@@ -86,6 +95,6 @@ public class dodajPostActivity extends AppCompatActivity {
                     finish();
                 })
                 .addOnFailureListener(e ->
-                        Toast.makeText(this, "Błąd przy dodawaniu posta: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                        Toast.makeText(this, "Błąd przy dodawaniu: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 }
