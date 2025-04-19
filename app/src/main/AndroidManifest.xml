@@ -35,6 +35,10 @@
             android:exported="true"
             android:label="activity_dodaj_event" />
         <activity
+            android:name=".KontoActivity"
+            android:exported="true"
+            android:label="activity_konto" />
+        <activity
             android:name=".dodajPostActivity"
             android:exported="true"
             android:label="activity_dodaj_post" />

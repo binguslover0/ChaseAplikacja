@@ -53,12 +53,20 @@ public class ZdjeciaActivity extends AppCompatActivity implements PostInterface{
 
         EventChangeListener();
 
-        // Navigate to EventActivity when the button is clicked
-        ImageButton button12 = findViewById(R.id.eventyButton);
-        button12.setOnClickListener(new View.OnClickListener() {
+        ImageButton eventButton = findViewById(R.id.eventyButton);
+        eventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ZdjeciaActivity.this, EventActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        ImageButton kontoButton = findViewById(R.id.kontobutton);
+        kontoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ZdjeciaActivity.this, KontoActivity.class);
                 startActivity(intent);
             }
         });
@@ -104,7 +112,7 @@ public class ZdjeciaActivity extends AppCompatActivity implements PostInterface{
                             }
                         }
 
-                        Log.d("ZdjeciaActivity", "Number of posts: " + postArrayList.size());
+                        //Log.d("ZdjeciaActivity", "Number of posts: " + postArrayList.size());
 
                         postAdapter.notifyDataSetChanged();
 

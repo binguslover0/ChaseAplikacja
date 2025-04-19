@@ -30,36 +30,36 @@ public class MainActivity extends AppCompatActivity {
     FirebaseAuth auth;
     GoogleSignInClient googleSignInClient;
 
-    private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result) {
-            if (result.getResultCode() == RESULT_OK) {
-                Task<GoogleSignInAccount> accountTask = GoogleSignIn.getSignedInAccountFromIntent(result.getData());
-                try {
-                    GoogleSignInAccount signInAccount = accountTask.getResult(ApiException.class);
-                    AuthCredential authCredential = GoogleAuthProvider.getCredential(signInAccount.getIdToken(), null);
-                    auth.signInWithCredential(authCredential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                // Authentication successful, redirect to ZdjeciaActivity
-                                Toast.makeText(MainActivity.this, "Signed in successfully!", Toast.LENGTH_SHORT).show();
-
-                                // Start ZdjeciaActivity
-                                Intent intent = new Intent(MainActivity.this, ZdjeciaActivity.class);
-                                startActivity(intent);
-                                finish();  // Finish the current activity so the user can't go back to it.
-                            } else {
-                                Toast.makeText(MainActivity.this, "Failed to sign in: " + task.getException(), Toast.LENGTH_SHORT).show();
-                            }
+    private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == RESULT_OK) {
+                        Task<GoogleSignInAccount> accountTask = GoogleSignIn.getSignedInAccountFromIntent(result.getData());
+                        try {
+                            GoogleSignInAccount signInAccount = accountTask.getResult(ApiException.class);
+                            AuthCredential authCredential = GoogleAuthProvider.getCredential(signInAccount.getIdToken(), null);
+                            auth.signInWithCredential(authCredential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(MainActivity.this, "Zalogowano pomyślnie", Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(MainActivity.this, ZdjeciaActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    } else {
+                                        Toast.makeText(MainActivity.this, "Błąd przy logowaniu: " + task.getException(), Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                        } catch (ApiException e) {
+                            e.printStackTrace();
+                            Toast.makeText(MainActivity.this, "Błąd Google Sign-In", Toast.LENGTH_SHORT).show();
                         }
-                    });
-                } catch (ApiException e) {
-                    e.printStackTrace();
+                    }
                 }
-            }
-        }
-    });
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,13 +67,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         FirebaseApp.initializeApp(this);
+        auth = FirebaseAuth.getInstance();
+
         GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.client_id))
                 .requestEmail()
                 .build();
-        googleSignInClient = GoogleSignIn.getClient(MainActivity.this, options);
 
-        auth = FirebaseAuth.getInstance();
+        googleSignInClient = GoogleSignIn.getClient(MainActivity.this, options);
 
         SignInButton signInButton = findViewById(R.id.signIn);
         signInButton.setOnClickListener(new View.OnClickListener() {
@@ -83,6 +84,18 @@ public class MainActivity extends AppCompatActivity {
                 activityResultLauncher.launch(intent);
             }
         });
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // Auto-login if already signed in
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        if (account != null && auth.getCurrentUser() != null) {
+            Intent intent = new Intent(MainActivity.this, ZdjeciaActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 }

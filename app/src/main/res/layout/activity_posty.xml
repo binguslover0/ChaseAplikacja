@@ -32,7 +32,7 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <ImageButton
-        android:id="@+id/button10"
+        android:id="@+id/kontobutton"
         android:layout_width="61dp"
         android:layout_height="59dp"
         android:background="#326EAE"
